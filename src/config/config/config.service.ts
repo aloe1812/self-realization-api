@@ -15,6 +15,10 @@ export class ConfigService {
     return Number(this.envConfig.PORT);
   }
 
+  get mongodbUri(): string {
+    return this.envConfig.MONGODB_URI;
+  }
+
   constructor(filePath: string) {
     const config = dotenv.parse(fs.readFileSync(filePath));
     this.envConfig = this.validateInput(config);
@@ -30,6 +34,7 @@ export class ConfigService {
         .valid(['development', 'production', 'test', 'provision'])
         .default('development'),
       PORT: Joi.number().default(3000),
+      MONGODB_URI: Joi.required(),
     });
 
     const { error, value: validatedEnvConfig } = Joi.validate(

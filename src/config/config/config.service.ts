@@ -19,6 +19,14 @@ export class ConfigService {
     return this.envConfig.MONGODB_URI;
   }
 
+  get tokenSecret(): string {
+    return this.envConfig.TOKEN_SECRET;
+  }
+
+  get tokenExpiresIn(): string {
+    return this.envConfig.TOKEN_EXPIRES_IN;
+  }
+
   constructor(filePath: string) {
     const config = dotenv.parse(fs.readFileSync(filePath));
     this.envConfig = this.validateInput(config);
@@ -34,7 +42,9 @@ export class ConfigService {
         .valid(['development', 'production', 'test', 'provision'])
         .default('development'),
       PORT: Joi.number().default(3000),
-      MONGODB_URI: Joi.required(),
+      MONGODB_URI: Joi.string().required(),
+      TOKEN_SECRET: Joi.string().required(),
+      TOKEN_EXPIRES_IN: Joi.string().default('60d'),
     });
 
     const { error, value: validatedEnvConfig } = Joi.validate(

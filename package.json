@@ -1,7 +1,7 @@
 {
-  "name": "my-balance-api",
+  "name": "self-realization-api",
   "version": "0.0.1",
-  "description": "Node.js (Nest) api server for MyBalance ",
+  "description": "Node.js (Nest) api server for Self Realization app",
   "author": "Eugene Krakosevich",
   "license": "MIT",
   "scripts": {

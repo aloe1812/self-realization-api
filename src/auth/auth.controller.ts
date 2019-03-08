@@ -1,5 +1,4 @@
-import { Controller, Post, Get, UseGuards, Body, HttpCode } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
+import { Controller, Post, Body, HttpCode } from '@nestjs/common';
 import { AuthService } from './services/auth/auth.service';
 import { SignUserDto } from '../users/dto/create-user.dto';
 
@@ -19,14 +18,6 @@ export class AuthController {
   @Post('signup')
   async signUp(@Body() signUserDto: SignUserDto) {
     return await this.authService.signUp(signUserDto);
-  }
-
-  @Get('testAuth')
-  @UseGuards(AuthGuard())
-  findAll() {
-    return {
-      ok: true,
-    };
   }
 
 }

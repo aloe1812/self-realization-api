@@ -1,4 +1,4 @@
-import { Injectable, BadRequestException, HttpException, InternalServerErrorException } from '@nestjs/common';
+import { Injectable, BadRequestException, InternalServerErrorException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { JwtPayload } from '../../interfaces/jwt-payload.interface';
 import { UsersService } from '../../../users/services/users/users.service';
@@ -50,7 +50,7 @@ export class AuthService {
     }
   }
 
-  async validateUser(payload: JwtPayload): Promise<any> {
+  async validateUser(payload: JwtPayload) {
     return await this.usersService.findOneByUsername(payload.username);
   }
 

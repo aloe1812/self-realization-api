@@ -1,4 +1,4 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { User } from '../../interfaces/user.interface';
 import { SignUserDto } from '../../dto/create-user.dto';
@@ -25,7 +25,7 @@ export class UsersService {
   }
 
   findOneByUsername(username: string) {
-    return this.userModel.findOne({username: { $eq: username }});
+    return this.userModel.findOne({ username });
   }
 
 }

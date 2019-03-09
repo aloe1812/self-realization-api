@@ -1,8 +1,9 @@
-import { Controller, UseGuards, Get, Param, Query, Req, BadRequestException } from '@nestjs/common';
+import { Controller, UseGuards, Get, Query, Req, BadRequestException } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { GetDayDto } from './dto/get-day.dto';
 import { DayService } from './services/day/day.service';
 import { Request } from 'express';
+import { dateFormat } from '../constants/common';
 
 @Controller('day')
 @UseGuards(AuthGuard())
@@ -17,7 +18,7 @@ export class DayController {
     const date = new Date(getDayDto.date);
 
     if (isNaN(date.getTime())) {
-      throw new BadRequestException('enter a valid date in format YYYY-MM-DD');
+      throw new BadRequestException(`enter a valid date in format ${dateFormat}`);
     }
 
     let day = await this.dayService.findDayByDate(request.user.id, date);

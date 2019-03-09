@@ -1,13 +1,10 @@
-import { IsNotEmpty, IsString, IsIn } from 'class-validator';
-import { GroupType } from '../../enums/group-type.enum';
-import { enumToArray } from '../../utils/common';
+import { IsNotEmpty, IsString, IsMongoId } from 'class-validator';
 
 export class AddGoalDto {
 
-  @IsNotEmpty({ message: 'type is required' })
-  @IsString({ message: 'title must be a string'})
-  @IsIn(enumToArray(GroupType), { message: 'type must be one of: mind, body, soul' })
-  readonly type: GroupType;
+  @IsNotEmpty({ message: 'typeId is required' })
+  @IsMongoId({ message: 'invalid typeId' })
+  readonly typeId: string;
 
   @IsNotEmpty({ message: 'title is required' })
   @IsString({ message: 'title must be a string'})

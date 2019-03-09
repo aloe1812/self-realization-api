@@ -16,23 +16,14 @@ export class DefaultGroupsService {
   ) {}
 
   async getAll(userId: string) {
-    const user = await this.userModel.findById(userId, 'groups.type groups.goals');
+    const user = await this.userModel.findById(userId, 'groups');
     return user.groups || [];
   }
 
   async addGoal(userId: string, addGoalDto: AddGoalDto) {
-    const result = await this.findUserAndGroup(userId, addGoalDto.type, false);
+    const result = await this.findUserAndGroup(userId, addGoalDto.typeId);
 
-    const { user } = result;
-    let { group } = result;
-
-    if (!group) {
-      user.groups.push({
-        type: addGoalDto.type,
-        goals: [],
-      });
-      group = user.groups[user.groups.length - 1];
-    }
+    const { user, group } = result;
 
     group.goals.push({ title: addGoalDto.title });
     await user.save();
@@ -41,7 +32,7 @@ export class DefaultGroupsService {
   }
 
   async updateGoal(userId: string, updateGoalDto: UpdateGoalDto) {
-    const { user, group } = await this.findUserAndGroup(userId, updateGoalDto.type);
+    const { user, group } = await this.findUserAndGroup(userId, updateGoalDto.typeId);
     const goal = group.goals.id(updateGoalDto.id);
 
     if (!goal) {
@@ -50,14 +41,12 @@ export class DefaultGroupsService {
 
     goal.title = updateGoalDto.title;
     await user.save();
+
+    return goal;
   }
 
   async deleteGoal(userId: string, deleteGoalDto: DeleteGoalDto) {
-    const { user, group } = await this.findUserAndGroup(userId, deleteGoalDto.type);
-
-    if (!group) {
-      throw new NotFoundException('goal with such id does not exist');
-    }
+    const { user, group } = await this.findUserAndGroup(userId, deleteGoalDto.typeId);
 
     group.goals.pull(deleteGoalDto.id);
     await user.save();
@@ -67,7 +56,7 @@ export class DefaultGroupsService {
     const user = await this.userModel.findById(userId, 'groups');
 
     sortGoalsDto.groups.forEach(groupDto => {
-      const group = user.groups.find(g => g.type === groupDto.type);
+      const group = user.groups.id(groupDto.typeId);
 
       if (!group) {
         return;
@@ -79,12 +68,12 @@ export class DefaultGroupsService {
     await user.save();
   }
 
-  private async findUserAndGroup(userId: string, groupType: GroupType, shouldThrowError = true) {
+  private async findUserAndGroup(userId: string, groupId: string) {
     const user = await this.userModel.findById(userId, 'groups');
-    const group = user.groups.find(g => g.type === groupType);
+    const group = user.groups.id(groupId);
 
-    if (shouldThrowError && !group) {
-      throw new NotFoundException('goal with such id does not exist');
+    if (!group) {
+      throw new NotFoundException('group with such id does not exist');
     }
 
     return { user, group };

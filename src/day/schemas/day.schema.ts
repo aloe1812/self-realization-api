@@ -1,7 +1,8 @@
 import { ObjectId } from 'bson';
 import { Schema } from 'mongoose';
 import { Group, Day } from '../interfaces/day.interface';
-import { formatDate } from '../../utils/common';
+import * as moment from 'moment';
+import { dateFormat } from '../../constants/common';
 
 const toJSONOptions = {
   virtuals: true,
@@ -10,7 +11,7 @@ const toJSONOptions = {
     delete ret.id;
 
     if (ret.date) {
-      ret.date = formatDate(ret.date);
+      ret.date = moment(ret.date).format(dateFormat);
     }
   },
 };

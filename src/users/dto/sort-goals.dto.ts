@@ -1,7 +1,5 @@
-import { IsArray, IsNotEmpty, IsString, IsIn, ValidateNested, IsMongoId } from 'class-validator';
+import { IsArray, IsNotEmpty, ValidateNested, IsMongoId } from 'class-validator';
 import { Type } from 'class-transformer';
-import { enumToArray } from '../../utils/common';
-import { GroupType } from '../../enums/group-type.enum';
 
 export class SortGoalsDto {
 

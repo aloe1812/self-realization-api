@@ -6,9 +6,13 @@ import { DefaultGroupsService } from '../../../users/services/default-groups/def
 import { AddGoalDto } from '../../dto/add-goal.dto';
 import { UpdateGoalDto } from '../../dto/update-goal.dto';
 import { DeleteGoalDto } from '../../dto/delete-goal.dto';
-import { GroupType } from '../../../enums/group-type.enum';
 import { SortGoalsDto } from '../../dto/sort-goals.dto';
 import { sortGroupsCompareFn } from '../../../utils/common';
+import * as Moment from 'moment';
+import { extendMoment } from 'moment-range';
+import { dateFormat } from '../../../constants/common';
+
+const moment = extendMoment(Moment);
 
 @Injectable()
 export class DayService {
@@ -91,6 +95,38 @@ export class DayService {
     });
 
     await day.save();
+  }
+
+  async getStatistics(userId: string, start: Date, end: Date) {
+    const dates = this.dayModel.find(
+      { userId, date: { $gte: start, $lte: end }},
+      'date complete groups.type groups.complete groups.goals.complete',
+    );
+
+    const result = [];
+    const range = moment.range(start, end);
+
+    for (const day of range.by('day')) {
+      const dayExists = await dates.findOne({date: day.toDate()});
+
+      if (dayExists) {
+        result.push({
+          date: day.format(dateFormat),
+          complete: dayExists.complete,
+          groups: dayExists.groups.map(g => ({
+            type: g.type,
+            complete: g.complete,
+          })),
+        });
+      } else {
+        result.push({
+          date: day.format(dateFormat),
+          complete: 0,
+        });
+      }
+    }
+
+    return result;
   }
 
   private async getDayData(userId: string, dayId: string, groupTypeId: string) {

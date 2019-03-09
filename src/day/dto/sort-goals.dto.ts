@@ -1,12 +1,9 @@
-import { IsArray, IsNotEmpty, IsString, IsIn, ValidateNested, IsMongoId } from 'class-validator';
+import { IsArray, IsNotEmpty, ValidateNested, IsMongoId } from 'class-validator';
 import { Type } from 'class-transformer';
-import { enumToArray } from '../../utils/common';
-import { GroupType } from '../../enums/group-type.enum';
 
 export class SortGoalsDto {
 
   @IsNotEmpty({ message: 'dayId is required' })
-  @IsString({ message: 'dayId must be a string'})
   @IsMongoId({ message: 'invalid dayId' })
   readonly dayId: string;
 
@@ -21,10 +18,9 @@ export class SortGoalsDto {
 // tslint:disable-next-line: max-classes-per-file
 export class GroupDto {
 
-  @IsNotEmpty({ message: 'type is required' })
-  @IsString({ message: 'title must be a string'})
-  @IsIn(enumToArray(GroupType), { message: 'type must be one of: mind, body, soul' })
-  readonly type: GroupType;
+  @IsNotEmpty({ message: 'typeId is required' })
+  @IsMongoId({ message: 'invalid typeId' })
+  readonly typeId: string;
 
   @IsNotEmpty({ message: 'goals is required' })
   @IsArray({ message: 'goals array is expected' })

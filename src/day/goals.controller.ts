@@ -29,7 +29,12 @@ export class GoalsController {
 
   @Delete()
   async deleteGoal(@Req() request: Request, @Body() deleteGoalDto: DeleteGoalDto) {
-    return await this.dayService.deleteGoal(request.user._id, deleteGoalDto);
+    const result = await this.dayService.deleteGoal(request.user._id, deleteGoalDto);
+
+    return {
+      day: result.day,
+      group: result.group,
+    };
   }
 
   @Post('sort')

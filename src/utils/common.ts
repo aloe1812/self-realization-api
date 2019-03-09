@@ -6,3 +6,7 @@ export function formatDate(date: Date): string {
     ]
     .join('-');
 }
+
+export function enumToArray(enumObject: object): string[] | number[] {
+  return Object.keys(enumObject).map(key => enumObject[key]);
+}

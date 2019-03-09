@@ -1,15 +1,15 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { DefaultGoalsService } from './default-goals.service';
+import { DefaultGroupsService } from './default-groups.service';
 
-describe('DefaultGoalsService', () => {
-  let service: DefaultGoalsService;
+describe('DefaultGroupsService', () => {
+  let service: DefaultGroupsService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [DefaultGoalsService],
+      providers: [DefaultGroupsService],
     }).compile();
 
-    service = module.get<DefaultGoalsService>(DefaultGoalsService);
+    service = module.get<DefaultGroupsService>(DefaultGroupsService);
   });
 
   it('should be defined', () => {

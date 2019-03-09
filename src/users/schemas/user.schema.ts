@@ -2,7 +2,7 @@ import * as mongoose from 'mongoose';
 import * as passportLocalMongoose from 'passport-local-mongoose';
 import { defaultGroups } from '../../constants/default-groups';
 
-const Schema = new mongoose.Schema({
+const UserSchema = new mongoose.Schema({
   username: {
     type: String,
     unique: true,
@@ -27,6 +27,6 @@ const Schema = new mongoose.Schema({
   },
 }, { timestamps: true });
 
-Schema.plugin(passportLocalMongoose);
+UserSchema.plugin(passportLocalMongoose);
 
-export const UserSchema = Schema;
+export default UserSchema;

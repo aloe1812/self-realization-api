@@ -21,12 +21,23 @@ export class DayController {
       throw new BadRequestException('enter a valid date in format YYYY-MM-DD');
     }
 
-    // const day = await this.dayService.createDay(request.user.id, date);
-    // return {
-    //   ...day.toJSON(),
-    //   date: formatDate(day.date),
-    // };
-    return;
+    let day = await this.dayService.findDayByDate(request.user.id, date);
+
+    if (!day) {
+      day = await this.dayService.createDay(request.user.id, date);
+    }
+
+    return {
+      ...day.toJSON(),
+      date: formatDate(day.date),
+    };
   }
+
+  // add goal
+  // update goal
+  // delete goal
+  // sort goals
+
+  // get days
 
 }

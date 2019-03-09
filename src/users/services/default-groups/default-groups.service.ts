@@ -6,6 +6,7 @@ import { AddGoalDto } from '../../dto/add-goal.dto';
 import { DeleteGoalDto } from '../../dto/delete-goal.dto';
 import { GroupType } from '../../../enums/group-type.enum';
 import { SortGoalsDto } from '../../dto/sort-goals.dto';
+import { sortGroupsCompareFn } from '../../../utils/common';
 
 @Injectable()
 export class DefaultGroupsService {
@@ -44,7 +45,7 @@ export class DefaultGroupsService {
     const goal = group.goals.id(updateGoalDto.id);
 
     if (!goal) {
-      throw new NotFoundException('Goal with such id does not exist');
+      throw new NotFoundException('goal with such id does not exist');
     }
 
     goal.title = updateGoalDto.title;
@@ -55,7 +56,7 @@ export class DefaultGroupsService {
     const { user, group } = await this.findUserAndGroup(userId, deleteGoalDto.type);
 
     if (!group) {
-      throw new NotFoundException('Goal with such id does not exist');
+      throw new NotFoundException('goal with such id does not exist');
     }
 
     group.goals.pull(deleteGoalDto.id);
@@ -72,24 +73,7 @@ export class DefaultGroupsService {
         return;
       }
 
-      group.goals.sort((a, b) => {
-        const indexA = groupDto.goals.indexOf(a.id);
-        const indexB = groupDto.goals.indexOf(b.id);
-
-        if (indexA === -1 && indexB === -1) { // both not found, we don't care which comes first
-          return 0;
-        }
-
-        if (indexA === -1) { // a not found, then it should have greater index than b
-          return 1;
-        }
-
-        if (indexB === -1) { // b not found, then it should have greater index than a
-          return -1;
-        }
-
-        return indexA < indexB ? -1 : 1;
-      });
+      group.goals.sort(sortGroupsCompareFn(groupDto));
     });
 
     await user.save();
@@ -100,7 +84,7 @@ export class DefaultGroupsService {
     const group = user.groups.find(g => g.type === groupType);
 
     if (shouldThrowError && !group) {
-      throw new NotFoundException('Goal with such id does not exist');
+      throw new NotFoundException('goal with such id does not exist');
     }
 
     return { user, group };

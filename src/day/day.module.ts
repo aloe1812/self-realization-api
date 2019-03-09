@@ -4,6 +4,7 @@ import { DayService } from './services/day/day.service';
 import { PassportModule } from '@nestjs/passport';
 import { MongooseModule } from '@nestjs/mongoose';
 import { UsersModule } from '../users/users.module';
+import { GoalsController } from './goals.controller';
 import DaySchema from './schemas/day.schema';
 
 @Module({
@@ -12,7 +13,7 @@ import DaySchema from './schemas/day.schema';
     MongooseModule.forFeature([{ name: 'Day', schema: DaySchema }]),
     UsersModule,
   ],
-  controllers: [DayController],
+  controllers: [DayController, GoalsController],
   providers: [DayService],
 })
 export class DayModule {}

@@ -1,11 +1,18 @@
 import { ObjectId } from 'bson';
 import { Schema } from 'mongoose';
 import { Group, Day } from '../interfaces/day.interface';
+import { formatDate } from '../../utils/common';
 
 const toJSONOptions = {
   virtuals: true,
   versionKey: false,
-  transform(doc: any, ret: any) { delete ret.id; },
+  transform(doc: any, ret: any) {
+    delete ret.id;
+
+    if (ret.date) {
+      ret.date = formatDate(ret.date);
+    }
+  },
 };
 
 // Group (child) Schema

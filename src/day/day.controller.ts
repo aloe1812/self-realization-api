@@ -3,7 +3,6 @@ import { AuthGuard } from '@nestjs/passport';
 import { GetDayDto } from './dto/get-day.dto';
 import { DayService } from './services/day/day.service';
 import { Request } from 'express';
-import { formatDate } from '../utils/common';
 
 @Controller('day')
 @UseGuards(AuthGuard())
@@ -27,17 +26,7 @@ export class DayController {
       day = await this.dayService.createDay(request.user.id, date);
     }
 
-    return {
-      ...day.toJSON(),
-      date: formatDate(day.date),
-    };
+    return day;
   }
-
-  // add goal
-  // update goal
-  // delete goal
-  // sort goals
-
-  // get days
 
 }

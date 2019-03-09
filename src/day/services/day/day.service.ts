@@ -1,8 +1,14 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Day } from '../../interfaces/day.interface';
 import { DefaultGroupsService } from '../../../users/services/default-groups/default-groups.service';
+import { AddGoalDto } from '../../dto/add-goal.dto';
+import { UpdateGoalDto } from '../../dto/update-goal.dto';
+import { DeleteGoalDto } from '../../dto/delete-goal.dto';
+import { GroupType } from '../../../enums/group-type.enum';
+import { SortGoalsDto } from '../../dto/sort-goals.dto';
+import { sortGroupsCompareFn } from '../../../utils/common';
 
 @Injectable()
 export class DayService {
@@ -31,6 +37,106 @@ export class DayService {
 
   async findDayByDate(userId: string, date: Date) {
     return await this.dayModel.findOne({ userId, date });
+  }
+
+  async addGoal(userId: string, addGoalDto: AddGoalDto) {
+    const day = await this.dayModel.findOne({ _id: addGoalDto.dayId, userId });
+
+    if (!day) {
+      throw new NotFoundException('day with such id does not exist');
+    }
+
+    let group = day.groups.find(g => g.type === addGoalDto.type);
+
+    if (!group) {
+      day.groups.push({
+        type: addGoalDto.type,
+        goals: [],
+      });
+      group = day.groups[day.groups.length - 1];
+    }
+
+    group.goals.push({ title: addGoalDto.title });
+
+    const savedDay = await day.save();
+    return this.updatedGoalResponse(savedDay, addGoalDto.type);
+  }
+
+  async updateGoal(userId: string, updateGoalDto: UpdateGoalDto) {
+    const { day, group } = await this.getDayData(userId, updateGoalDto.dayId, updateGoalDto.type);
+
+    const goal = group.goals.id(updateGoalDto.id);
+
+    if (!goal) {
+      throw new NotFoundException('group with such id does not exist');
+    }
+
+    if (updateGoalDto.title) {
+      goal.title = updateGoalDto.title;
+    }
+
+    if (updateGoalDto.complete) {
+      goal.complete = updateGoalDto.complete;
+    }
+
+    const savedDay = await day.save();
+    return this.updatedGoalResponse(savedDay, updateGoalDto.type);
+  }
+
+  async deleteGoal(userId: string, deleteGoalDto: DeleteGoalDto) {
+    const { day, group } = await this.getDayData(userId, deleteGoalDto.dayId, deleteGoalDto.type);
+    group.goals.pull(deleteGoalDto.id);
+
+    const savedDay = await day.save();
+    return this.updatedGoalResponse(savedDay, deleteGoalDto.type);
+  }
+
+  async sortGoals(userId: string, sortGoalsDto: SortGoalsDto) {
+    const day = await this.dayModel.findOne({ _id: sortGoalsDto.dayId, userId });
+
+    sortGoalsDto.groups.forEach(groupDto => {
+      const group = day.groups.find(g => g.type === groupDto.type);
+
+      if (!group) {
+        return;
+      }
+
+      group.goals.sort(sortGroupsCompareFn(groupDto));
+    });
+
+    await day.save();
+  }
+
+  private async getDayData(userId: string, dayId: string, groupType: GroupType) {
+    const day = await this.dayModel.findOne({ _id: dayId, userId });
+
+    if (!day) {
+      throw new NotFoundException('day with such id does not exist');
+    }
+
+    const group = day.groups.find(g => g.type === groupType);
+
+    if (!group) {
+      throw new NotFoundException('group with such type does not exist');
+    }
+
+    return { day, group };
+  }
+
+  private updatedGoalResponse(day: Day, groupType: string) {
+    const savedGroup = day.groups.find(g => g.type === groupType);
+    const savedGoal = savedGroup.goals[savedGroup.goals.length - 1];
+
+    return {
+      goal: savedGoal,
+      day: {
+        complete: day.complete,
+      },
+      group: {
+        type: savedGroup.type,
+        complete: savedGroup.complete,
+      },
+    };
   }
 
 }

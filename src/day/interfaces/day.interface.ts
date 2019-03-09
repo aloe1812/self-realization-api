@@ -3,14 +3,15 @@ import { GroupType } from '../../enums/group-type.enum';
 
 export interface Day extends Document {
   date: Date;
+  userId: string;
   groups: Types.DocumentArray<Group>;
-  complete: number;
+  readonly complete: number;
 }
 
 export interface Group extends Document {
   type: GroupType;
   goals: Types.DocumentArray<Goal>;
-  complete: number;
+  readonly complete: number;
 }
 
 export interface Goal extends Document {

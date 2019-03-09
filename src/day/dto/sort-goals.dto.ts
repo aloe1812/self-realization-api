@@ -1,9 +1,11 @@
-import { IsArray, IsNotEmpty, IsString, IsIn, ValidateNested, IsMongoId } from 'class-validator';
+import { IsArray, IsNotEmpty, ValidateNested, IsMongoId } from 'class-validator';
 import { Type } from 'class-transformer';
-import { enumToArray } from '../../utils/common';
-import { GroupType } from '../../enums/group-type.enum';
 
 export class SortGoalsDto {
+
+  @IsNotEmpty({ message: 'dayId is required' })
+  @IsMongoId({ message: 'invalid dayId' })
+  readonly dayId: string;
 
   @IsNotEmpty({ message: 'groups is required' })
   @IsArray({ message: 'groups array is expected' })

@@ -1,25 +1,32 @@
 import * as mongoose from 'mongoose';
 import * as passportLocalMongoose from 'passport-local-mongoose';
-import { defaultGoals } from '../../constants/goals';
+import { defaultGroups } from '../../constants/default-groups';
 
-const Schema = new mongoose.Schema({
+const UserSchema = new mongoose.Schema({
   username: {
     type: String,
     unique: true,
     required: [true, 'username is required'],
   },
   password: String,
-  goals: {
+  groups: {
     type: [
       {
-        title: String,
+        type: {
+          type: String,
+        },
+        goals: [
+          {
+            title: String,
+          },
+        ],
       },
     ],
-    default: defaultGoals,
+    default: defaultGroups,
     select: false,
   },
 }, { timestamps: true });
 
-Schema.plugin(passportLocalMongoose);
+UserSchema.plugin(passportLocalMongoose);
 
-export const UserSchema = Schema;
+export default UserSchema;

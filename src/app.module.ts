@@ -1,6 +1,4 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { ConfigModule } from './config/config.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigService } from './config/config/config.service';
@@ -22,7 +20,5 @@ import { DayModule } from './day/day.module';
     AuthModule,
     DayModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
 })
 export class AppModule {}

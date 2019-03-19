@@ -29,4 +29,8 @@ const UserSchema = new mongoose.Schema({
 
 UserSchema.plugin(passportLocalMongoose);
 
+UserSchema.set('toJSON', {
+  versionKey: false,
+});
+
 export default UserSchema;

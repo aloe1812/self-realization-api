@@ -3,8 +3,6 @@ import { AppModule } from './app.module';
 import { ConfigService } from './config/config/config.service';
 import { ValidationPipe } from '@nestjs/common';
 import * as helmet from 'helmet';
-import * as cookieParser from 'cookie-parser';
-import * as csurf from 'csurf';
 import * as compression from 'compression';
 
 async function bootstrap() {
@@ -14,8 +12,7 @@ async function bootstrap() {
 
   // security
   app.use(helmet());
-  app.use(cookieParser());
-  app.use(csurf({ cookie: true }));
+  app.enableCors();
 
   // optimization
   app.use(compression());

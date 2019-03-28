@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { UserModel } from '../../interfaces/user.interface';
 import { UpdateGoalDto } from '../../dto/update-goal.dto';
@@ -24,6 +24,10 @@ export class DefaultGroupsService {
     const result = await this.findUserAndGroup(userId, addGoalDto.typeId);
 
     const { user, group } = result;
+
+    if (group.goals.length > 50) {
+      throw new ForbiddenException('too many goals of this type: must be equal or less than 50');
+    }
 
     group.goals.push({ title: addGoalDto.title });
     await user.save();

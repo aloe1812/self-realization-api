@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Day } from '../../interfaces/day.interface';
@@ -45,6 +45,10 @@ export class DayService {
 
   async addGoal(userId: string, addGoalDto: AddGoalDto) {
     const { day, group } = await this.getDayData(userId, addGoalDto.dayId, addGoalDto.typeId);
+
+    if (group.goals.length > 50) {
+      throw new ForbiddenException('too many goals of this type: must be equal or less than 50');
+    }
 
     group.goals.push({ title: addGoalDto.title });
 

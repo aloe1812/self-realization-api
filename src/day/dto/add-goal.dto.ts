@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsString, IsMongoId } from 'class-validator';
+import { IsNotEmpty, IsString, IsMongoId, MaxLength } from 'class-validator';
 
 export class AddGoalDto {
 
@@ -12,6 +12,7 @@ export class AddGoalDto {
 
   @IsNotEmpty({ message: 'title is required' })
   @IsString({ message: 'title must be a string'})
+  @MaxLength(500, { message: 'title length must be equal or less than 500' })
   readonly title: string;
 
 }

@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsString, IsMongoId, IsOptional, IsNumber, Min, Max } from 'class-validator';
+import { IsNotEmpty, IsString, IsMongoId, IsOptional, IsNumber, Min, Max, MaxLength } from 'class-validator';
 
 export class UpdateGoalDto {
 
@@ -16,6 +16,7 @@ export class UpdateGoalDto {
 
   @IsOptional()
   @IsString({ message: 'title must be a string'})
+  @MaxLength(500, { message: 'title length must be equal or less than 500' })
   readonly title: string;
 
   @IsOptional()
